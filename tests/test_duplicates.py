@@ -31,16 +31,51 @@ class TestDuplicates(unittest.TestCase):
     ###
     # duplicates.filter tests
     ###
+
+    # From dictionary
+    def test_filter_dict_one_match_found(self):
+        self.duplicates.filtered_tuples = []
+        self.duplicates.filter('cat')
+        expected_tuples = [('a1b', 'file/cat/one')]
+        self.assertEquals(self.duplicates.filtered_tuples, expected_tuples)
+
+    def test_filter_dict_many_matches_found(self):
+        self.duplicates.filtered_tuples = []
+        self.duplicates.filter('two')
+        expected_tuples = [('a3b', 'file/lizard/two'), ('a1b', 'file/dog/two')]
+        self.assertEquals(self.duplicates.filtered_tuples, expected_tuples)
+
+    def test_filter_dict_no_matches_found(self):
+        self.duplicates.filtered_tuples = []
+        self.duplicates.filter('dino')
+        expected_tuples = []
+        self.assertEquals(self.duplicates.filtered_tuples, expected_tuples)
+
+    # From existing filter
     def test_filter_one_match_found(self):
-        filtered_tuples = [('a1b', 'file/cat')]
-        self.assertEquals(self.duplicates.filter('cat'), filtered_tuples)
+        self.duplicates.filtered_tuples = \
+            [('a3b', 'file/lizard/two'), ('a1b', 'file/dog/two')]
+        self.duplicates.filter('lizard')
+        expected_tuples = [('a3b', 'file/lizard/two')]
+        self.assertEquals(self.duplicates.filtered_tuples, expected_tuples)
     
     def test_filter_many_matches_found(self):
-        filtered_tuples = [('a1b', 'file/dog/two'), ('a3b', 'file/lizard/two')]
-        self.assertEquals(self.duplicates.filter('two'), filtered_tuples)
+        self.duplicates.filtered_tuples = \
+            [('a3b', 'file/lizard/two'), 
+             ('a1b', 'file/dog/two'), 
+             ('a4b', 'file/dog/three')]
+        self.duplicates.filter('dog')
+        expected_tuples = [('a1b', 'file/dog/two'), ('a4b', 'file/dog/three')]
+        self.assertEquals(self.duplicates.filtered_tuples, expected_tuples)
    
     def test_filter_no_matches_found(self):
-        self.assertEquals(self.duplicates.filter('dino'), [])
+        self.duplicates.filtered_tuples = \
+            [('a3b', 'file/lizard/two'), 
+             ('a1b', 'file/dog/two'), 
+             ('a4b', 'file/dog/three')]
+        self.duplicates.filter('seven')
+        expected_tuples = []
+        self.assertEquals(self.duplicates.filtered_tuples, expected_tuples)
 
     ###
     # duplicates.list tests
@@ -50,9 +85,11 @@ class TestDuplicates(unittest.TestCase):
         test_duplicates = Duplicates(self.test_dict, filtered_tuples)
         test_duplicates.list()
         self.assertEquals(self.output.getvalue(), 'a1b file/dog/two\na3b file/lizard/two\n')
+        test_duplicates.filtered_tuples = []
 
     def test_list_from_empty_filter(self):
-        self.duplicates.list()
+        duplicates = Duplicates(self.test_dict)
+        duplicates.list()
         self.assertEquals(self.output.getvalue(), 'Nothing selected for deletion.\n')
 
     ###
@@ -70,14 +107,17 @@ class TestDuplicates(unittest.TestCase):
     
         self.assertEquals(test_duplicates.duplicates_dict, test_expected_dict)
         self.assertEquals(test_duplicates.filtered_tuples, [])
+        test_duplicates.filtered_tuples = []
 
     def test_delete_fail_deleting_non_duplicate(self):
+        duplicates = Duplicates(self.test_dict)
+        duplicates.delete()
         filtered_tuples = [('a2b', 'file/fish/one')]
-        self.duplicates.delete()
         
-        self.assertEquals(self.duplicates.duplicates_dict, self.test_dict)
+        self.assertEquals(duplicates.duplicates_dict, self.test_dict)
         self.assertEquals(self.output.getvalue(),  
             'file/fish/one is selected for deletion, but is no longer a duplicate!\n')
+        duplicates.filtered_tuples = []
 
 if __name__ == '__main__':
     unittest.main()
