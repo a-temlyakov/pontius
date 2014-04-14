@@ -35,19 +35,19 @@ class TestDuplicates(unittest.TestCase):
     # From dictionary
     def test_filter_dict_one_match_found(self):
         self.duplicates.filtered_tuples = []
-        self.duplicates.filter('cat')
+        self.duplicates.filter_duplicates('cat')
         expected_tuples = [('a1b', 'file/cat/one')]
         self.assertEquals(self.duplicates.filtered_tuples, expected_tuples)
 
     def test_filter_dict_many_matches_found(self):
         self.duplicates.filtered_tuples = []
-        self.duplicates.filter('two')
+        self.duplicates.filter_duplicates('two')
         expected_tuples = [('a3b', 'file/lizard/two'), ('a1b', 'file/dog/two')]
         self.assertEquals(self.duplicates.filtered_tuples, expected_tuples)
 
     def test_filter_dict_no_matches_found(self):
         self.duplicates.filtered_tuples = []
-        self.duplicates.filter('dino')
+        self.duplicates.filter_duplicates('dino')
         expected_tuples = []
         self.assertEquals(self.duplicates.filtered_tuples, expected_tuples)
 
@@ -55,7 +55,7 @@ class TestDuplicates(unittest.TestCase):
     def test_filter_one_match_found(self):
         self.duplicates.filtered_tuples = \
             [('a3b', 'file/lizard/two'), ('a1b', 'file/dog/two')]
-        self.duplicates.filter('lizard')
+        self.duplicates.filter_duplicates('lizard')
         expected_tuples = [('a3b', 'file/lizard/two')]
         self.assertEquals(self.duplicates.filtered_tuples, expected_tuples)
     
@@ -64,7 +64,7 @@ class TestDuplicates(unittest.TestCase):
             [('a3b', 'file/lizard/two'), 
              ('a1b', 'file/dog/two'), 
              ('a4b', 'file/dog/three')]
-        self.duplicates.filter('dog')
+        self.duplicates.filter_duplicates('dog')
         expected_tuples = [('a1b', 'file/dog/two'), ('a4b', 'file/dog/three')]
         self.assertEquals(self.duplicates.filtered_tuples, expected_tuples)
    
@@ -73,7 +73,7 @@ class TestDuplicates(unittest.TestCase):
             [('a3b', 'file/lizard/two'), 
              ('a1b', 'file/dog/two'), 
              ('a4b', 'file/dog/three')]
-        self.duplicates.filter('seven')
+        self.duplicates.filter_duplicates('seven')
         expected_tuples = []
         self.assertEquals(self.duplicates.filtered_tuples, expected_tuples)
 
@@ -83,13 +83,13 @@ class TestDuplicates(unittest.TestCase):
     def test_list_from_filter(self):
         filtered_tuples = [('a1b', 'file/dog/two'), ('a3b', 'file/lizard/two')]
         test_duplicates = Duplicates(self.test_dict, filtered_tuples)
-        test_duplicates.list()
+        test_duplicates.list_duplicates()
         self.assertEquals(self.output.getvalue(), 'a1b file/dog/two\na3b file/lizard/two\n')
         test_duplicates.filtered_tuples = []
 
     def test_list_from_empty_filter(self):
         duplicates = Duplicates(self.test_dict)
-        duplicates.list()
+        duplicates.list_duplicates()
         self.assertEquals(self.output.getvalue(), 'Nothing selected for deletion.\n')
 
     ###

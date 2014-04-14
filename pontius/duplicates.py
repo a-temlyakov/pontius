@@ -1,11 +1,13 @@
 __author__ = """Andrew Temlyakov (temlyaka@gmail.com)"""
 
+import file_util
+
 class Duplicates(object):
     def __init__(self, duplicates_dict={}, filtered_tuples=[]):
         self.duplicates_dict = duplicates_dict
         self.filtered_tuples = filtered_tuples
 
-    def filter(self, search_value):
+    def filter_duplicates(self, search_value):
         """ Filter duplicates whose value matches the search value """  
         if not self.filtered_tuples:
             """ search inside dictionary if no filter exists """
@@ -20,23 +22,26 @@ class Duplicates(object):
             self.filtered_tuples[:] = \
                 [x for x in self.filtered_tuples if x[1].find(search_value) != -1]
 
-    def list(self):
+    def list_duplicates(self):
         """ List all duplicates currently selected for deletion """
         if self.filtered_tuples:
             for key,value in self.filtered_tuples:
                 print key,value
         else:
             print "Nothing selected for deletion."
-    
+
+    def reset(self):
+        """ Reset/clear the filtered_tuples to start over """
+        self.filtered_tuples = []
+
     def load(self, file_path):
         """ Load duplicates from a file """
-        pass
+        self.duplicates_dict = file_util.load_file(file_path)
 
     def save(self, file_path):
         """ Save remaining duplicates to a file """
-        pass
+        file_util.save(self.duplicates, file_path)
 
-    def delete(self):
+    def delete(self, file_path):
         """ Delete all duplicates currently selected """
         pass
-

@@ -5,14 +5,22 @@ __author__ = """Andrew Temlyakov (temlyaka@gmail.com)"""
 import cmd
 import sys
 
+from duplicates import Duplicates
+
 class DuplicatesCli(cmd.Cmd):
     prompt = '> '
+    completekey = '\t'
+    cmdqueue = []
+    
+    def __init__(self):
+        self.duplicates = Duplicates()
 
     def do_load(self, duplicates_file):
         """load [duplicates_file]
         Load the data from the duplicates file
         Expected file format: md5_hash full/file/path"""
         print "Loading file: " + duplicates_file + "..."
+        self.duplicates.load(duplicates_file) 
 
     def do_save(self, save_file):
         """save [save_file]
@@ -23,12 +31,17 @@ class DuplicatesCli(cmd.Cmd):
     def do_filter(self, query):
         """filter [query]
         Finds all file paths that contain the given query"""
-        pass
+        self.duplicates.filter_duplicates(query)
 
     def do_list(self, line):
         """list 
         List all files that are currently selected for deletion"""
-        pass
+        self.duplicates.list_duplicates()
+
+    def do_reset(self):
+        """reset
+        Reset the filtered values"""
+        self.duplicates.reset()
 
     def do_delete(self, line):
         """delete
