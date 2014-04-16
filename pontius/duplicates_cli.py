@@ -50,8 +50,8 @@ class DuplicatesCli(cmd.Cmd):
         
         Use at own risk! Will delete file entirely, without making any
         backups."""
-        pass
-
+        self.duplicates.delete()
+    
     def do_exit(self, line):
         """exit
         Exit the CLI"""

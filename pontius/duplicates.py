@@ -39,9 +39,30 @@ class Duplicates(object):
         self.duplicates_dict = file_util.load_file(file_path)
 
     def save(self, file_path):
-        """ Save remaining duplicates to a file """
-        file_util.save(self.duplicates, file_path)
+        """ Save remaining list duplicates to a file """
+        file_util.save_file(self.duplicates_dict, file_path)
 
-    def delete(self, file_path):
+    def delete(self):
         """ Delete all duplicates currently selected """
-        pass
+        list_of_kept_values = []
+        
+        for key,value in self.filtered_tuples:
+            if len(self.duplicates_dict[key]) > 1:
+                file_util.delete_file(value)
+                self.duplicates_dict[key].remove(value)
+            else:
+                """ Nuke the key, since it's no longer a duplicate """
+                self.duplicates_dict.pop(key)
+                list_of_kept_values.append(value)
+ 
+        if len(list_of_kept_values) > 0:
+            message = ("The following values have not been deleted, "
+                       "because duplicates\n are no longer detected for "
+                       "them:")
+            print message
+
+            for value in list_of_kept_values:
+                print value
+    
+        self.reset()
+
