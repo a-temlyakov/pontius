@@ -4,6 +4,7 @@ __author__ = """Andrew Temlyakov (temlyaka@gmail.com)"""
 
 import copy
 import sys
+import os.path
 import StringIO
 import unittest
 
@@ -96,22 +97,46 @@ class TestDuplicates(unittest.TestCase):
     # duplicates.delete tests
     ###
     def test_delete_dictionary_updated_filter_reset(self):
-        self.duplicates.duplicates_dict = self.test_dict
-        self.duplicates.filtered_tuples = [('a1b', 'file/dog/two'), 
-                                           ('a3b', 'file/lizard/two')]
+        file_to_delete_one = 'dog.two'
+        file_to_delete_two = 'lizard.two'
+
+        self.duplicates.duplicates_dict = {'a1b':['file/cat/one',file_to_delete_one], 
+                                           'a2b':['file/fish/one'], 
+                                           'a3b':['file/bird/one',
+                                                  file_to_delete_two,
+                                                  'file/elephant/three']}
+        self.duplicates.filtered_tuples = [('a1b', file_to_delete_one), 
+                                           ('a3b', file_to_delete_two)]
 
         test_expected_dict = {'a1b':['file/cat/one'], 
                               'a2b':['file/fish/one'], 
                               'a3b':['file/bird/one',
                                      'file/elephant/three']}
+       
+        #Create the files for deletion
+        open(file_to_delete_one, 'a').close()
+        open(file_to_delete_two, 'a').close()
+    
+        #Make sure files created succesfully
+        self.assertTrue(os.path.isfile(file_to_delete_one))
+        self.assertTrue(os.path.isfile(file_to_delete_two))
         
         self.duplicates.delete()
-    
+
+        #Make sure files are gone now
+        self.assertFalse(os.path.isfile(file_to_delete_one))
+        self.assertFalse(os.path.isfile(file_to_delete_two))
+        
+        #Make sure data updated accordingly
         self.assertEquals(self.duplicates.duplicates_dict, test_expected_dict)
         self.assertEquals(self.duplicates.filtered_tuples, [])
 
     def test_delete_fail_deleting_non_duplicate(self):
-        self.duplicates.duplicates_dict = self.test_dict
+        self.duplicates.duplicates_dict = {'a1b':['file/cat/one','file/dog/two'], 
+                                           'a2b':['file/fish/one'], 
+                                           'a3b':['file/bird/one',
+                                                  'file/lizard/two',
+                                                  'file/elephant/three']}
         self.duplicates.filtered_tuples = [('a2b', 'file/fish/one')]
         
         test_expected_dict = {'a1b':['file/cat/one','file/dog/two'], 
@@ -120,7 +145,7 @@ class TestDuplicates(unittest.TestCase):
                                      'file/elephant/three']}
         
         self.duplicates.delete()
-        
+         
         self.assertEquals(self.duplicates.duplicates_dict, test_expected_dict)
         self.assertEquals(self.duplicates.filtered_tuples, [])
 

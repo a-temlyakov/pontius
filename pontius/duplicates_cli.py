@@ -26,7 +26,7 @@ class DuplicatesCli(cmd.Cmd):
         """save [save_file]
         Save existing duplicates that are in memory to a file.
         This is useful after doing a few deletions."""
-        pass
+        self.duplicates.save(save_file)
 
     def do_filter(self, query):
         """filter [query]
