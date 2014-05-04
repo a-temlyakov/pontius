@@ -5,7 +5,7 @@ __author__ = """Andrew Temlyakov (temlyaka@gmail.com)"""
 import cmd
 import sys
 
-from duplicates import Duplicates
+from pontius.duplicates import Duplicates
 
 class DuplicatesCli(cmd.Cmd):
     prompt = '> '
