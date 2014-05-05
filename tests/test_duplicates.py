@@ -131,6 +131,26 @@ class TestDuplicates(unittest.TestCase):
         self.assertEquals(self.duplicates.duplicates_dict, test_expected_dict)
         self.assertEquals(self.duplicates.filtered_tuples, [])
 
+    def test_detele_fail_file_not_exist(self):
+        self.duplicates.duplicates_dict = {'a1b':['file/cat/one','file/dog/two'], 
+                                           'a2b':['file/fish/one'], 
+                                           'a3b':['file/bird/one',
+                                                  'file/lizard/two',
+                                                  'file/elephant/three']}
+        self.duplicates.filtered_tuples = [('a1b', 'file/cat/one')]
+        test_expected_dict = {'a1b':['file/cat/one','file/dog/two'], 
+                              'a2b':['file/fish/one'], 
+                              'a3b':['file/bird/one',
+                                     'file/lizard/two',
+                                     'file/elephant/three']}
+
+        #Should not fail when trying to delete non-existing file
+        self.duplicates.delete()
+        
+        #Should not have changed duplicates dict, but cleared the filtered tuples
+        self.assertEquals(self.duplicates.duplicates_dict, test_expected_dict)
+        self.assertEquals(self.duplicates.filtered_tuples, [])
+    
     def test_delete_fail_deleting_non_duplicate(self):
         self.duplicates.duplicates_dict = {'a1b':['file/cat/one','file/dog/two'], 
                                            'a2b':['file/fish/one'], 

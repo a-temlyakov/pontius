@@ -22,6 +22,8 @@ class Duplicates(object):
             self.filtered_tuples[:] = \
                 [x for x in self.filtered_tuples if x[1].find(search_value) != -1]
 
+        print "Found {0} matches.".format(len(self.filtered_tuples)) 
+
     def list_duplicates(self):
         """ List all duplicates currently selected for deletion """
         if self.filtered_tuples:
@@ -48,17 +50,22 @@ class Duplicates(object):
         
         for key,value in self.filtered_tuples:
             if len(self.duplicates_dict[key]) > 1:
-                file_util.delete_file(value)
-                self.duplicates_dict[key].remove(value)
+                try:
+                    file_util.delete_file(value)
+                    self.duplicates_dict[key].remove(value)
+                    print "[SUCCESS] Deleted: {0}".format(value)
+                except OSError as e:
+                    print "[ERROR] Failed to delete file: {0}. {1}.".format(value, e.strerror)
+                    list_of_kept_values.append(value)
             else:
                 """ Nuke the key, since it's no longer a duplicate """
                 self.duplicates_dict.pop(key)
                 list_of_kept_values.append(value)
  
         if len(list_of_kept_values) > 0:
-            message = ("The following values have not been deleted, "
-                       "because duplicates\n are no longer detected for "
-                       "them:")
+            message = ("The following files have not been deleted.\n"
+                       "Either duplicates are no longer detected for "
+                       "them or an error occured while deleting them:")
             print message
 
             for value in list_of_kept_values:
