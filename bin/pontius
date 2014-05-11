@@ -19,30 +19,50 @@ class DuplicatesCli(cmd.Cmd):
         """load [duplicates_file]
         Load the data from the duplicates file
         Expected file format: md5_hash full/file/path"""
+        
         print "Loading file: " + duplicates_file + "..."
-        self.duplicates.load(duplicates_file) 
+        try:
+            self.duplicates.load(duplicates_file) 
+        except Exception as e:
+            self._print_error(e)
 
     def do_save(self, save_file):
         """save [save_file]
         Save existing duplicates that are in memory to a file.
         This is useful after doing a few deletions."""
-        self.duplicates.save(save_file)
+
+        try:
+            self.duplicates.save(save_file)
+        except Exception as e:
+            self._print_error(e)
 
     def do_filter(self, query):
         """filter [query]
         Finds all file paths that contain the given query"""
-        self.duplicates.filter_duplicates(query)
+
+        try:
+            self.duplicates.filter_duplicates(query)
+        except Exception as e:
+            self._print_error(e)
 
     def do_list(self, line):
         """list 
         List all files that are currently selected for deletion"""
-        self.duplicates.list_duplicates()
+      
+        try:
+            self.duplicates.list_duplicates()
+        except Exception as e:
+            self._print_error(e)
 
     def do_reset(self, line):
         """reset
         Reset the filtered values"""
-        self.duplicates.reset()
-        print "Filtered duplicates have been reset."
+
+        try:
+            self.duplicates.reset()
+            print "Filtered duplicates have been reset."
+        except Exception as e:
+            self._print_error(e)
 
     def do_delete(self, line):
         """delete
@@ -51,12 +71,20 @@ class DuplicatesCli(cmd.Cmd):
         
         Use at own risk! Will delete file entirely, without making any
         backups."""
-        self.duplicates.delete()
+
+        try:
+            self.duplicates.delete()
+        except:
+            self._print_error(e)
     
     def do_exit(self, line):
         """exit
         Exit the CLI"""
         sys.exit(0)
+
+    def _print_error(self, e):
+        print "[ERROR] {1}".format(e.errno, e.strerror)
+        
 
 if __name__ == '__main__':
     DuplicatesCli().cmdloop()
