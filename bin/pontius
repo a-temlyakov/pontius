@@ -38,10 +38,11 @@ class DuplicatesCli(cmd.Cmd):
         List all files that are currently selected for deletion"""
         self.duplicates.list_duplicates()
 
-    def do_reset(self):
+    def do_reset(self, line):
         """reset
         Reset the filtered values"""
         self.duplicates.reset()
+        print "Filtered duplicates have been reset."
 
     def do_delete(self, line):
         """delete
