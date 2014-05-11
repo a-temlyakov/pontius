@@ -74,7 +74,7 @@ class DuplicatesCli(cmd.Cmd):
 
         try:
             self.duplicates.delete()
-        except:
+        except Exception as e:
             self._print_error(e)
     
     def do_exit(self, line):
@@ -85,6 +85,5 @@ class DuplicatesCli(cmd.Cmd):
     def _print_error(self, e):
         print "[ERROR] {1}".format(e.errno, e.strerror)
         
-
 if __name__ == '__main__':
-    DuplicatesCli().cmdloop()
+        DuplicatesCli().cmdloop()
